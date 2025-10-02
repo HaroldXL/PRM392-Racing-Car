@@ -24,19 +24,25 @@ public class ResultActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         boolean playerWon = intent.getBooleanExtra("PLAYER_WON", false);
-        int winnings = intent.getIntExtra("WINNINGS", 0);
         int newBalance = intent.getIntExtra("NEW_BALANCE", 100);
+        int totalBet = intent.getIntExtra("TOTAL_BET", 0);
+        int payout = intent.getIntExtra("PAYOUT", 0);
 
         if (playerWon) {
-            tvResultTitle.setText("BẠN THẮNG!");
+            tvResultTitle.setText("BẠN THẮNG CƯỢC!");
             tvResultTitle.setTextColor(ContextCompat.getColor(this, android.R.color.holo_orange_light));
-            tvWinnings.setText("Bạn nhận được " + winnings + "$");
-            playSound(R.raw.win_sound); // Giả sử bạn có file win_sound.wav
+            // Tính toán lời/lỗ
+            int netGain = payout - totalBet;
+            String resultText = "Tiền thắng: " + payout + "$\n"
+                    + "Tổng cược: " + totalBet + "$\n"
+                    + "Lời/Lỗ: " + (netGain >= 0 ? "+" : "") + netGain + "$";
+            tvWinnings.setText(resultText);
+            playSound(R.raw.win_sound);
         } else {
-            tvResultTitle.setText("BẠN THUA!");
+            tvResultTitle.setText("BẠN THUA HẾT CƯỢC!");
             tvResultTitle.setTextColor(ContextCompat.getColor(this, android.R.color.holo_red_light));
-            tvWinnings.setText("Chúc bạn may mắn lần sau.");
-            playSound(R.raw.lose_sound); // Giả sử bạn có file lose_sound.wav
+            tvWinnings.setText("Bạn đã mất " + totalBet + "$. Chúc may mắn lần sau.");
+            playSound(R.raw.lose_sound);
         }
 
         btnPlayAgain.setOnClickListener(v -> {

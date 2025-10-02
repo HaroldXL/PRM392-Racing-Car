@@ -49,12 +49,12 @@
         android:id="@+id/control_panel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="44dp"
         android:background="#80000000"
         android:orientation="vertical"
         android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        tools:layout_editor_absoluteX="0dp">
 
         <TextView
             android:id="@+id/tvBalance"
@@ -71,47 +71,42 @@
             android:text="Chọn xe để cược:"
             android:textColor="@android:color/white" />
 
-        <RadioGroup
-            android:id="@+id/rgCars"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <RadioButton
-                android:id="@+id/rbCar1"
-                android:layout_width="72dp"
-                android:layout_height="match_parent"
-                android:text="Xe 1"
-                android:textColor="@android:color/white" />
-
-            <RadioButton
-                android:id="@+id/rbCar2"
-                android:layout_width="83dp"
-                android:layout_height="match_parent"
-                android:text="Xe 2"
-                android:textColor="@android:color/white" />
-
-            <RadioButton
-                android:id="@+id/rbCar3"
-                android:layout_width="86dp"
-                android:layout_height="match_parent"
-                android:text="Xe 3"
-                android:textColor="@android:color/white" />
-        </RadioGroup>
-
-        <EditText
-            android:id="@+id/etBetAmount"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nhập số tiền cược"
-            android:inputType="number"
-            android:textColor="@android:color/white"
-            android:textColorHint="#CCCCCC" />
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:id="@+id/cbCar1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Xe 1 (10$)"
+                android:textColor="@android:color/white" />
+
+            <CheckBox
+                android:id="@+id/cbCar2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Xe 2 (10$)"
+                android:textColor="@android:color/white" />
+
+            <CheckBox
+                android:id="@+id/cbCar3"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Xe 3 (15$)"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/btnStartRace"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="Bắt đầu đua!" />
 
         <Button
