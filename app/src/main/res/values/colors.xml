@@ -2,4 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="dark_blue_primary">#1A237E</color>
+    <color name="dark_blue_secondary">#283593</color>
+    <color name="accent_cyan">#00BCD4</color>
+    <color name="accent_green">#00E676</color>
+    <color name="text_light">#E8EAF6</color>
+    <color name="text_highlight">#FFFF00</color>
 </resources>

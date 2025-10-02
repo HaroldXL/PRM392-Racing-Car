@@ -1,11 +1,13 @@
 package com.example.racingcarprm392; // Thay bằng package của bạn
 
 import android.content.Intent;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 
 public class LoginActivity extends AppCompatActivity {
@@ -32,5 +34,12 @@ public class LoginActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        ConstraintLayout rootLayout = findViewById(R.id.root_layout_login); // Dùng đúng id của layout
+        AnimationDrawable animationDrawable = (AnimationDrawable) rootLayout.getBackground();
+        animationDrawable.setEnterFadeDuration(2000);
+        animationDrawable.setExitFadeDuration(4000);
+        animationDrawable.start();
+
     }
 }

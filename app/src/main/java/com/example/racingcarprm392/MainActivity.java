@@ -2,42 +2,51 @@ package com.example.racingcarprm392; // Thay bằng package của bạn
 
 import android.app.Activity;
 import android.content.Intent;
-import android.media.MediaPlayer;
+import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import com.google.android.material.button.MaterialButton;
+
 import java.util.ArrayList;
 import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    // THAY ĐỔI BIẾN KHAI BÁO
+    // Khai báo các thành phần UI
     ImageView car1, car2, car3;
-    Button btnStartRace, btnTopUp;
+    MaterialButton btnStartRace, btnTopUp;
     TextView tvBalance;
-    CheckBox cbCar1, cbCar2, cbCar3; // Đổi RadioGroup thành 3 CheckBox
-    View controlPanel;
+    CheckBox cbCar1, cbCar2, cbCar3;
+    ConstraintLayout rootLayout;
+    LinearLayout controlPanel;
 
-    // Định nghĩa số tiền cược cố định cho mỗi xe
+    // Các hằng số và biến cho logic game
     private static final int BET_CAR_1 = 10;
     private static final int BET_CAR_2 = 10;
     private static final int BET_CAR_3 = 15;
-    private static final int PAYOUT_MULTIPLIER = 3; // Tỷ lệ trả thưởng (x3)
+    private static final int PAYOUT_MULTIPLIER = 3; // Tỷ lệ trả thưởng
 
     private int playerBalance = 100;
     private int totalBetAmount = 0;
-    private ArrayList<Integer> chosenCars = new ArrayList<>(); // Lưu danh sách xe đã cược
+    private ArrayList<Integer> chosenCars = new ArrayList<>();
 
     private boolean isRaceRunning = false;
-    private float initialCarX;
+    private float initialCarX; // Lưu vị trí X ban đầu của xe
 
     private ActivityResultLauncher<Intent> topUpLauncher;
 
@@ -46,26 +55,40 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game);
 
-        // Ánh xạ views
+        // Ánh xạ views từ file XML
         car1 = findViewById(R.id.car1);
         car2 = findViewById(R.id.car2);
         car3 = findViewById(R.id.car3);
         btnStartRace = findViewById(R.id.btnStartRace);
         btnTopUp = findViewById(R.id.btnTopUp);
         tvBalance = findViewById(R.id.tvBalance);
-        controlPanel = findViewById(R.id.control_panel);
         cbCar1 = findViewById(R.id.cbCar1);
         cbCar2 = findViewById(R.id.cbCar2);
         cbCar3 = findViewById(R.id.cbCar3);
+        rootLayout = findViewById(R.id.root_layout);
+        controlPanel = findViewById(R.id.control_panel);
 
+        // Kích hoạt nền gradient động
+        AnimationDrawable animationDrawable = (AnimationDrawable) rootLayout.getBackground();
+        animationDrawable.setEnterFadeDuration(2000);
+        animationDrawable.setExitFadeDuration(4000);
+        animationDrawable.start();
+
+        // Chạy animation cho bảng điều khiển khi vào ứng dụng
+        Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in_bottom);
+        controlPanel.startAnimation(slideIn);
+
+        // Lấy vị trí ban đầu của xe
         car1.post(() -> initialCarX = car1.getX());
 
+        // Nhận lại số dư khi "Chơi lại"
         Intent intent = getIntent();
         if (intent.hasExtra("UPDATED_BALANCE")) {
             playerBalance = intent.getIntExtra("UPDATED_BALANCE", 100);
         }
         updateBalanceText();
 
+        // Khởi tạo Launcher để nhận kết quả từ TopUpActivity
         topUpLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
@@ -77,39 +100,68 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+        // Gán sự kiện cho nút "Đua ngay"
         btnStartRace.setOnClickListener(v -> {
             if (isRaceRunning) return;
             if (calculateAndValidateBet()) {
                 playerBalance -= totalBetAmount;
                 updateBalanceText();
-                controlPanel.setVisibility(View.GONE);
+
+                // Chạy animation trượt ra trước khi ẩn bảng điều khiển
+                Animation slideOut = AnimationUtils.loadAnimation(this, R.anim.slide_out_bottom);
+                slideOut.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationStart(Animation animation) {}
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        // Chỉ ẩn sau khi animation kết thúc
+                        controlPanel.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {}
+                });
+                controlPanel.startAnimation(slideOut);
+
                 isRaceRunning = true;
                 startRace();
             }
         });
 
+        // Gán sự kiện cho nút "Nạp tiền"
         btnTopUp.setOnClickListener(v -> {
             Intent topUpIntent = new Intent(MainActivity.this, TopUpActivity.class);
             topUpLauncher.launch(topUpIntent);
         });
-        resetRace();
     }
 
+    // Cập nhật hiển thị số dư
     private void updateBalanceText() {
-        tvBalance.setText("Số dư: " + playerBalance + "$");
+        tvBalance.setText(playerBalance + "$");
     }
 
+    // Đưa game về trạng thái ban đầu
     private void resetRace() {
         isRaceRunning = false;
         controlPanel.setVisibility(View.VISIBLE);
+
+        // Chạy lại animation trượt vào khi reset
+        Animation slideIn = AnimationUtils.loadAnimation(this, R.anim.slide_in_bottom);
+        controlPanel.startAnimation(slideIn);
+
+        // Đưa xe về vạch xuất phát
         car1.setX(initialCarX);
         car2.setX(initialCarX);
         car3.setX(initialCarX);
+
+        // Bỏ chọn tất cả checkbox
         cbCar1.setChecked(false);
         cbCar2.setChecked(false);
         cbCar3.setChecked(false);
     }
 
+    // Tính tổng tiền cược và kiểm tra hợp lệ
     private boolean calculateAndValidateBet() {
         totalBetAmount = 0;
         chosenCars.clear();
@@ -139,6 +191,7 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    // Bắt đầu cuộc đua
     private void startRace() {
         View finishLine = findViewById(R.id.finish_line);
         float finishX = finishLine.getX() - car1.getWidth();
@@ -180,6 +233,7 @@ public class MainActivity extends AppCompatActivity {
         raceTimer.start();
     }
 
+    // Thông báo người thắng và chuyển màn hình
     private void announceWinner(int winningCar) {
         if (!isRaceRunning) return;
         isRaceRunning = false;

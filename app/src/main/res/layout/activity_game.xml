@@ -2,119 +2,213 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/animated_gradient_background"
     tools:context=".MainActivity">
 
-    <View
-        android:id="@+id/finish_line"
-        android:layout_width="5dp"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.95"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageView
-        android:id="@+id/car1"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="50dp"
-        android:src="@drawable/car_icon_1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/car2"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/car_icon_2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/car1" />
-
-    <ImageView
-        android:id="@+id/car3"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
-        android:src="@drawable/car_icon_3"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/car2" />
-
     <LinearLayout
-        android:id="@+id/control_panel"
-        android:layout_width="match_parent"
+        android:id="@+id/balance_container"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="44dp"
-        android:background="#80000000"
-        android:orientation="vertical"
-        android:padding="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="0dp">
+        android:layout_marginTop="24dp"
+        android:background="@drawable/checkbox_background_unchecked"
+        android:elevation="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp"
+        android:paddingVertical="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="8dp"
+            android:src="@drawable/ic_money_bag"
+            app:tint="@color/text_highlight" />
 
         <TextView
             android:id="@+id/tvBalance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Số dư: 100$"
-            android:textColor="@android:color/white"
-            android:textSize="18sp" />
+            android:text="100$"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/car1"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="16dp"
+        android:elevation="8dp"
+        android:src="@drawable/car_icon_1"
+        app:layout_constraintBottom_toTopOf="@+id/car2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <ImageView
+        android:id="@+id/car2"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginVertical="24dp"
+        android:elevation="8dp"
+        android:src="@drawable/car_icon_2"
+        app:layout_constraintBottom_toTopOf="@+id/car3"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/car1" />
+
+    <ImageView
+        android:id="@+id/car3"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="16dp"
+        android:elevation="8dp"
+        android:src="@drawable/car_icon_3"
+        app:layout_constraintBottom_toTopOf="@+id/control_panel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/car2" />
+
+    <View
+        android:id="@+id/lane_divider_1"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="8dp"
+        android:background="#40FFFFFF"
+        android:layerType="software"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/car1" />
+
+    <View
+        android:id="@+id/lane_divider_2"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="8dp"
+        android:background="#40FFFFFF"
+        android:layerType="software"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/car2" />
+
+    <View
+        android:id="@+id/lane_divider_3"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="8dp"
+        android:background="#40FFFFFF"
+        android:layerType="software"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/car3" />
+
+
+    <View
+        android:id="@+id/finish_line"
+        android:layout_width="6dp"
+        android:layout_height="0dp"
+        android:layout_marginVertical="16dp"
+        android:background="#80FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/control_panel"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/control_panel"
+        android:background="@drawable/control_panel_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="44dp"
+        android:elevation="12dp"
+        android:orientation="vertical"
+        android:padding="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        tools:layout_editor_absoluteX="0dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Chọn xe để cược:"
-            android:textColor="@android:color/white" />
+            android:layout_gravity="center"
+            android:layout_marginBottom="16dp"
+            android:text="CHỌN CƯỢC CỦA BẠN"
+            android:textColor="@color/text_light"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
             android:orientation="horizontal">
 
             <CheckBox
                 android:id="@+id/cbCar1"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginEnd="8dp"
                 android:layout_weight="1"
+                android:background="@drawable/checkbox_selector"
+                android:button="@null"
+                android:gravity="center"
                 android:text="Xe 1 (10$)"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/white"
+                android:textStyle="bold" />
 
             <CheckBox
                 android:id="@+id/cbCar2"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="8dp"
                 android:layout_weight="1"
+                android:background="@drawable/checkbox_selector"
+                android:button="@null"
+                android:gravity="center"
                 android:text="Xe 2 (10$)"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/white"
+                android:textStyle="bold" />
 
             <CheckBox
                 android:id="@+id/cbCar3"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
                 android:layout_weight="1"
+                android:background="@drawable/checkbox_selector"
+                android:button="@null"
+                android:gravity="center"
                 android:text="Xe 3 (15$)"
-                android:textColor="@android:color/white" />
+                android:textColor="@color/white"
+                android:textStyle="bold" />
         </LinearLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStartRace"
+            style="@style/Widget.MaterialComponents.Button"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="Bắt đầu đua!" />
+            android:layout_height="60dp"
+            android:text="ĐUA NGAY!"
+            android:textSize="18sp"
+            app:backgroundTint="@color/accent_green"
+            app:cornerRadius="16dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnTopUp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
             android:layout_marginTop="8dp"
-            android:text="Nạp tiền" />
+            android:text="Nạp Tiền"
+            android:textColor="@color/white"
+            app:cornerRadius="16dp"
+            app:strokeColor="@color/accent_cyan" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
