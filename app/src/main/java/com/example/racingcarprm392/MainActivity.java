@@ -8,7 +8,6 @@ import android.os.CountDownTimer;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.example.racingcarprm392.Utils.SoundPlayer;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -29,17 +29,19 @@ public class MainActivity extends AppCompatActivity {
 
     // Khai báo các thành phần UI
     ImageView car1, car2, car3;
-    MaterialButton btnStartRace, btnTopUp;
-    TextView tvBalance;
+    MaterialButton btnStartRace, btnTopUp, btnBetSettings;
+    TextView tvBalance, tvBetAnnoucement;
     CheckBox cbCar1, cbCar2, cbCar3;
     ConstraintLayout rootLayout;
     LinearLayout controlPanel;
+    SoundPlayer carSoundPlayer = new SoundPlayer(this);
+    SoundPlayer mainMusic = new SoundPlayer(this);
 
     // Các hằng số và biến cho logic game
-    private static final int BET_CAR_1 = 10;
-    private static final int BET_CAR_2 = 10;
-    private static final int BET_CAR_3 = 15;
-    private static final int PAYOUT_MULTIPLIER = 3; // Tỷ lệ trả thưởng
+    private static int BET_CAR_1 = 0;
+    private static int BET_CAR_2 = 0;
+    private static int BET_CAR_3 = 0;
+    private static double PAYOUT_MULTIPLIER = 2; // Tỷ lệ trả thưởng
 
     private int playerBalance = 100;
     private int totalBetAmount = 0;
@@ -49,6 +51,14 @@ public class MainActivity extends AppCompatActivity {
     private float initialCarX; // Lưu vị trí X ban đầu của xe
 
     private ActivityResultLauncher<Intent> topUpLauncher;
+    private ActivityResultLauncher<Intent> betSettingsLauncher;
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        carSoundPlayer.stopSound();
+        mainMusic.stopSound();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +77,16 @@ public class MainActivity extends AppCompatActivity {
         cbCar3 = findViewById(R.id.cbCar3);
         rootLayout = findViewById(R.id.root_layout);
         controlPanel = findViewById(R.id.control_panel);
+        btnBetSettings = findViewById(R.id.btnBetSettings);
+        tvBetAnnoucement = findViewById(R.id.bet_announcement);
+
+        mainMusic.playSound(R.raw.main_music, true);
+        cbCar3.setClickable(false);
+        cbCar3.setFocusable(false);
+        cbCar2.setClickable(false);
+        cbCar2.setFocusable(false);
+        cbCar1.setClickable(false);
+        cbCar1.setFocusable(false);
 
         // Kích hoạt nền gradient động
         AnimationDrawable animationDrawable = (AnimationDrawable) rootLayout.getBackground();
@@ -100,6 +120,69 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
 
+        betSettingsLauncher = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                result -> {
+                    if (result.getResultCode() == Activity.RESULT_OK && result.getData() != null) {
+                        Intent data = result.getData();
+                        BET_CAR_1 = data.getIntExtra("BET_CAR_1", BET_CAR_1);
+                        BET_CAR_2 = data.getIntExtra("BET_CAR_2", BET_CAR_2);
+                        BET_CAR_3 = data.getIntExtra("BET_CAR_3", BET_CAR_3);
+                        int bettedCar = 0;
+                        chosenCars.clear();
+                        if(BET_CAR_1 > 0) {
+                            ++bettedCar;
+                            chosenCars.add(1);
+                            cbCar1.setChecked(true);
+                            cbCar1.setText( "Xe 1 (" + Integer.toString(BET_CAR_1) + "$)");
+                        } else {
+                            cbCar1.setChecked(false);
+                            cbCar1.setText( "Xe 1" );
+                        }
+                        if(BET_CAR_2 > 0) {
+                            ++bettedCar;
+                            chosenCars.add(2);
+                            cbCar2.setChecked(true);
+                            cbCar2.setText( "Xe 2 (" + Integer.toString(BET_CAR_2) + "$)");
+                        } else {
+                            cbCar2.setChecked(false);
+                            cbCar2.setText( "Xe 2" );
+                        }
+                        if(BET_CAR_3 > 0) {
+                            ++bettedCar;
+                            chosenCars.add(3);
+                            cbCar3.setChecked(true);
+                            cbCar3.setText( "Xe 3 (" + Integer.toString(BET_CAR_3) + "$)");
+                        } else {
+                            cbCar3.setChecked(false);
+                            cbCar3.setText( "Xe 3" );
+                        }
+                        switch (bettedCar) {
+                            case 0:
+                                tvBetAnnoucement.setText("CƯỢC CỦA BẠN");
+                                PAYOUT_MULTIPLIER = 0;
+                                break;
+                            case 1:
+                                tvBetAnnoucement.setText("CƯỢC CỦA BẠN (x2)");
+                                PAYOUT_MULTIPLIER = 2.0;
+                                break;
+                            case 2:
+                                tvBetAnnoucement.setText("CƯỢC CỦA BẠN (x1.5)");
+                                PAYOUT_MULTIPLIER = 1.5;
+                                break;
+                            case 3:
+                                tvBetAnnoucement.setText("CƯỢC CỦA BẠN (x1.2)");
+                                PAYOUT_MULTIPLIER = 1.2;
+                                break;
+                            default:
+                                tvBetAnnoucement.setText("CƯỢC CỦA BẠN");
+                                PAYOUT_MULTIPLIER = 0;
+                                break;
+                        }
+                        Toast.makeText(this, "Cập nhật tiền cược thành công!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
         // Gán sự kiện cho nút "Đua ngay"
         btnStartRace.setOnClickListener(v -> {
             if (isRaceRunning) return;
@@ -111,11 +194,12 @@ public class MainActivity extends AppCompatActivity {
                 Animation slideOut = AnimationUtils.loadAnimation(this, R.anim.slide_out_bottom);
                 slideOut.setAnimationListener(new Animation.AnimationListener() {
                     @Override
-                    public void onAnimationStart(Animation animation) {}
+                    public void onAnimationStart(Animation animation) {
+
+                    }
 
                     @Override
                     public void onAnimationEnd(Animation animation) {
-                        // Chỉ ẩn sau khi animation kết thúc
                         controlPanel.setVisibility(View.GONE);
                     }
 
@@ -127,6 +211,15 @@ public class MainActivity extends AppCompatActivity {
                 isRaceRunning = true;
                 startRace();
             }
+        });
+
+        btnBetSettings.setOnClickListener(v -> {
+            Intent betIntent = new Intent(MainActivity.this, BetSettingsActivity.class);
+            betIntent.putExtra("BET_CAR_1", BET_CAR_1);
+            betIntent.putExtra("BET_CAR_2", BET_CAR_2);
+            betIntent.putExtra("BET_CAR_3", BET_CAR_3);
+            betIntent.putExtra("BALANCE", playerBalance);
+            betSettingsLauncher.launch(betIntent);
         });
 
         // Gán sự kiện cho nút "Nạp tiền"
@@ -194,6 +287,7 @@ public class MainActivity extends AppCompatActivity {
     // Bắt đầu cuộc đua
     private void startRace() {
         View finishLine = findViewById(R.id.finish_line);
+        carSoundPlayer.playSound(R.raw.racing, false);
         float finishX = finishLine.getX() - car1.getWidth();
 
         CountDownTimer raceTimer = new CountDownTimer(30000, 30) {
@@ -238,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
         if (!isRaceRunning) return;
         isRaceRunning = false;
 
+        carSoundPlayer.stopSound();
         Intent intent = new Intent(MainActivity.this, ResultActivity.class);
 
         int payout = 0;
@@ -245,9 +340,9 @@ public class MainActivity extends AppCompatActivity {
 
         if (chosenCars.contains(winningCar)) {
             playerWonSomething = true;
-            if (winningCar == 1) payout = BET_CAR_1 * PAYOUT_MULTIPLIER;
-            else if (winningCar == 2) payout = BET_CAR_2 * PAYOUT_MULTIPLIER;
-            else if (winningCar == 3) payout = BET_CAR_3 * PAYOUT_MULTIPLIER;
+            if (winningCar == 1) payout = (int)(BET_CAR_1 * PAYOUT_MULTIPLIER);
+            else if (winningCar == 2) payout = (int)(BET_CAR_2 * PAYOUT_MULTIPLIER);
+            else if (winningCar == 3) payout = (int)(BET_CAR_3 * PAYOUT_MULTIPLIER);
         }
 
         int newBalance = playerBalance + payout;
@@ -260,4 +355,5 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
 }

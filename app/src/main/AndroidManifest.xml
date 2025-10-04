@@ -32,5 +32,9 @@
             android:name=".TopUpActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".BetSettingsActivity"
+            android:exported="false" />
+
     </application>
 </manifest>

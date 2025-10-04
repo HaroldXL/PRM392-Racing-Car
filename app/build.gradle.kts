@@ -8,8 +8,8 @@ android {
 
     defaultConfig {
         applicationId = "com.example.racingcarprm392"
-        minSdk = 36
-        targetSdk = 36
+        minSdk = 34
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
