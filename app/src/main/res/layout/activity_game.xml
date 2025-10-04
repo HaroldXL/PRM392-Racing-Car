@@ -27,8 +27,7 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginEnd="8dp"
-            android:src="@drawable/ic_money_bag"
-            app:tint="@color/text_highlight" />
+            android:src="@drawable/ic_money_bag" />
 
         <TextView
             android:id="@+id/tvBalance"
@@ -123,10 +122,10 @@
 
     <LinearLayout
         android:id="@+id/control_panel"
-        android:background="@drawable/control_panel_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="44dp"
+        android:layout_marginBottom="4dp"
+        android:background="@drawable/control_panel_background"
         android:elevation="12dp"
         android:orientation="vertical"
         android:padding="24dp"
